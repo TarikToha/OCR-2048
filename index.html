@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>2048 OCR Demo</title>
+
+    <!-- Load Tesseract.js -->
+    <script src="tesseract.min.js"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2rem;
+        }
+
+        #main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        #imagePreview {
+            width: 300px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        #output {
+            white-space: pre;
+            font-family: monospace;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            min-width: 200px;
+            max-width: 100%;
+        }
+
+        #log {
+            margin-top: 2rem;
+            font-family: monospace;
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        input[type="file"] {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<h2>🧠 2048 OCR Demo</h2>
+<div id="status">⏳ Loading OpenCV...</div>
+<input type="file" id="upload" accept="image/*" style="display:none;">
+
+<div id="main">
+    <img id="imagePreview" src="" alt="Upload a 2048 Screenshot"/>
+    <div id="output">Waiting for input...</div>
+</div>
+
+<div id="log">[ Debug Log ]</div>
+<canvas id="canvas" style="display:none;"></canvas>
+
+<!-- Main logic -->
+<script type="module">
+    import {ocr2048} from './ocr2048.js';
+
+    window.init = function () {
+        document.getElementById("status").textContent = "✅ Ready! Upload a screenshot.";
+        document.getElementById("upload").style.display = "inline";
+    };
+
+    function log(msg) {
+        const div = document.createElement("div");
+        div.textContent = msg;
+        document.getElementById("log").appendChild(div);
+        document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+    }
+
+    document.getElementById("upload").addEventListener("change", async e => {
+        const file = e.target.files[0];
+        const url = URL.createObjectURL(file);
+        document.getElementById("imagePreview").src = url;
+        document.getElementById("output").textContent = "🔍 Processing...";
+        document.getElementById("log").innerHTML = "[ Debug Log ]";
+
+        try {
+            const board = await ocr2048(url, log);
+            const result = board.map(row => row.map(n => String(n).padStart(4)).join(" ")).join("\n");
+            document.getElementById("output").textContent = "🧩 OCR 2048 Board:\n" + result;
+        } catch (err) {
+            document.getElementById("output").textContent = err;
+            log(err);
+        }
+    });
+</script>
+
+<!-- OpenCV loader -->
+<script src="opencv.js" onload="onOpenCvReady()" async></script>
+<script>
+    function onOpenCvReady() {
+        if (cv.getBuildInformation) window.init();
+        else cv['onRuntimeInitialized'] = () => window.init();
+    }
+</script>
+</body>
+</html>
