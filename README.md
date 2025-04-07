@@ -2,8 +2,7 @@
 
 ## Overview
 
-A browser-based OCR demo that detects the game board state from a screenshot of the 2048 game using Tesseract.js and
-OpenCV.js. Users can upload a screenshot, and the app will display a recognized 4×4 grid of tile values.
+A browser-based OCR demo that detects the game board state from a screenshot of the 2048 game using Tesseract.js and OpenCV.js. Users can upload a screenshot, and the app will display a recognized 4×4 grid of tile values.
 
 ## Features
 
@@ -32,14 +31,18 @@ OpenCV.js. Users can upload a screenshot, and the app will display a recognized 
 2. Upload a screenshot of a 2048 game board.
 3. View the extracted tile values and debug log.
 
+## Example Input
+
+![2048 Game Screenshot](screencaps/screenshot265.png)
+
 ## Example Output
 
 ```text
 🧩 OCR 2048 Board:
-   2   4   8  32
-  64 128 256 512
-   4   8  16  32
-  64 128 256 512
+   2   4   4   8
+  32  16   4   2
+   2  64  16   4
+  32   8   4   2
 ```
 
 ## Notes
